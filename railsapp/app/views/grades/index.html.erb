@@ -1,0 +1,99 @@
+<% if current_user != nil && !current_user.has_seen_grades %>
+	<script>
+	$(document).ready(function(){
+		setTimeout(function(){
+			$("div.help a.modalInput").trigger('click');
+		}, 100);
+	});
+	</script>
+	<% current_user.has_seen_grades = true %>
+	<% current_user.save %>
+<% end %>
+
+
+<div class="modal" id="yesno">
+  <h2>Grades</h2>
+
+  <p>
+  	Here you can see how <% if current_user.role == "teacher"%> your students <% else %> you <% end %> are doing in your courses.
+  </p>
+
+  <p>
+    <button class="close"> Ok </button><span class="note"> You can also hit escape to close this dialog. </span>
+  </p>
+</div>
+
+<h1>
+	<% if current_user.role == "teacher" %>
+		Class Grades
+	<% else %>
+		My Grades
+	<% end %>
+</h1>
+
+<br/>
+
+<% course_index = 0 %>
+<% @courses.each do |course| %>
+	<h2><%= course.course_name %></h2>
+	<table class = "list" >
+
+		<thead>
+			<!-- Assignment Titles Row -->
+			<tr>
+				<th>Title:</th>
+				<% course.assignments.each do |assignment| %>
+					<th><b><%= assignment.title %></b></th>
+				<% end %>
+				<th><b>Total</b></th>
+			</tr>
+		</thead>
+		
+		<tbody>
+			<!-- Out Of Row -->
+			<tr class = "even">
+				<td class = "first_title">Total:</td>
+				<% course.assignments.collect { |a| a.questions.sum { |q| q.points }}.each do |total| %>
+					<td class = "middle"><%= total %> pts</td>
+				<% end %>
+				<td class = "last"></td>
+			</tr>
+	
+			<!-- Weight Row -->
+			<tr class = "odd">
+				<td class = "first_title">Value:</td>
+				<% course.assignments.each do |assignment| %>
+					<td class = "middle"><%= assignment.value %>%</td>
+				<% end %>
+				<td class = "last"><%= course.assignments.collect { |a| a.value }.sum %>%</td>
+			</tr>
+			
+			<!-- Points Earned Row -->
+			<% is_odd = true %>
+			<% students = course.students %>
+			<% if current_user.role?("student") %>
+				<% students = [current_user] %>
+			<% end %>
+			<% students.each do |user| %>
+				<% if is_odd %><tr class = "even"><% else %><tr class = "odd"><% end %>
+					<td class = "first_student"><%= user.username %></td>
+
+					<% course.assignments.each do |assignment| %>
+						<td class = "middle">
+							<% if assignment.graded?(user) %>
+								<%= assignment.grade(user)/100.0 * assignment.questions.collect { |q| q.points }.sum %> <span class="note"><%= assignment.grade(user) %>%</span>
+							<% end %>
+						</td>
+					<% end %>
+					</td>
+
+					<td class = "last"></td>
+				</tr>
+				<% is_odd = !is_odd %>
+			<% end %>
+
+		</tbody>
+	</table>
+	<br/>
+
+<% end %>

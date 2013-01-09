@@ -1,0 +1,29 @@
+<h1>Listing courses</h1>
+<br/>
+<table class = "list">
+  <thead>
+	  <tr>
+	    <th>Course name</th>
+	    <th>Course description</th>
+	    <th></th>
+	    <th></th>
+	  </tr>
+  </thead>
+
+    <tbody>
+		<% @courses.each do |course| %>
+		  <tr>
+		    <td class = "middle"><%= link_to course.course_name, course_path(course) %></td>
+		    <td class = "middle"><%= course.course_description %></td>
+		    <td class = "last"><% if can? :update, course %><% if course.professor == current_user %><%= link_to 'Edit', edit_course_path(course) %><%end%><%end%></td>
+		    <td class = "last"><% if can? :destroy, course %><% if course.professor == current_user %><%= link_to 'Destroy', course, confirm: 'Are you sure?', method: :delete %><%end%><%end%></td>
+		  </tr>
+		<% end %>
+	</tbody>
+</table>
+
+<br />
+
+<% if can? :create, Course %>
+	<%= link_to 'New Course', new_course_path %>
+<%end%>

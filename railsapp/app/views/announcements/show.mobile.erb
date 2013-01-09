@@ -1,0 +1,16 @@
+<p id="notice"><%= notice %></p>
+	
+<p>
+	<%= @announcement.updated_at.strftime("%A, %b %d - %I:%M %p") %>
+	<h1><%= @announcement.title%></h1>
+</p>
+
+<p>
+  	<div class="announcement"><b><%= @announcement.text %></b></div>
+</p>
+
+<% if can? :update, Announcement%>
+	<% if @announcement.course.professor == current_user %>
+		<%= link_to "Edit Announcement", edit_course_announcement_path(@announcement.course, @announcement)%>
+	<% end %>
+<%end%>

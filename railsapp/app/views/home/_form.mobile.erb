@@ -1,0 +1,17 @@
+<%= form_tag("/home") do |f|%>	
+	<table>
+	  <tr>
+	    <th>Course</th>
+	    <th>Enroll</th>	    
+	  </tr>
+	
+	<% current_user.unenrolled_courses.each do |c| %>	
+		<tr>
+			<td><%= c.course_name %></ts>
+		    <td><%= radio_button_tag(:course_id, c.id)%>
+			</td>	
+		</tr>
+	<% end %>
+	</table>
+	<%= submit_tag("Register")%>
+<% end %>

@@ -1,0 +1,67 @@
+<% if current_user != nil && !current_user.has_seen_courses %>
+	<script>
+	$(document).ready(function(){
+		setTimeout(function(){
+			$("div.help a.modalInput").trigger('click');
+		}, 100);
+	});
+	</script>
+	<% current_user.has_seen_courses = true %>
+	<% current_user.save %>
+<% end %>
+
+
+<div class="modal" id="yesno">
+  <h2>Courses</h2>
+
+  <p>
+  	Here you can see a list of every course you are <% if current_user.role == "teacher"%> teaching. <% else %> enrolled in. <% end %>
+    <br/>
+    <br/>
+    Notice the links below the list of courses.  From these you can manage your curriculum online:
+    <ul>
+	    <% if current_user.role == "teacher" %>
+	    <% else %>
+	    	<li><b>Add a course</b> - Here you can check off from a list of available courses, the ones you would like to enroll in.</li>
+	    	<li><b>Remove a course</b> - Here you can drop a course or more, if you've found that they no longer interest you.</li>
+	    <% end %>
+    </ul>
+  </p>
+
+  <p>
+    <button class="close"> Ok </button><span class="note"> You can also hit escape to close this dialog. </span>
+  </p>
+</div>
+
+<p id="notice"><%= notice %></p>
+
+<p>
+	<h1>My courses:</h1>
+	<br/>
+	<table class = "list" cellspacing="15">
+		<thead>
+			<tr>
+				<th>Course</th>
+				<th>Description</th>
+			</tr>
+		</thead>
+		<tbody>
+			<% for course in current_user.courses do %>
+			
+				<tr>
+					<td class = "middle"><%= link_to course.course_name, course %></td>
+					<td class = "middle"><%= course.course_description%></td>
+				</tr>
+			<%end%>
+		</tbody>
+	</table>
+</p>
+
+<%= link_to "Add a course", home_add_course_path %>
+<br />
+<%= link_to "Remove a course", home_remove_course_path %>
+<br />
+<!--<%= link_to "Remove all", :controller => "home", :action => "remove_courses"%>-->
+<br />
+<br />
+<%= link_to 'Back', home_courses_path %>

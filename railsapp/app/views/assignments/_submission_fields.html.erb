@@ -1,0 +1,35 @@
+<script>
+	$(document).ready(function(){
+	  $(".numeric").forceNumeric();
+	});
+</script>
+
+
+<% if params[:type] == 'submit' %>
+	Your Answer:
+	<div class="field_values edittable"><%= f.text_area :response, :rows => 3, :class => "fill border contents" %></div>
+	<%= f.hidden_field :user_id, :value => current_user.id %>
+<% elsif params[:type] == 'grade' %>
+	Student's <%= f.label :response %><br/>
+	<%= f.text_area :response, :rows => 3, :class => "questionText", :readOnly => true %>
+	<table width="100%">
+		<tr>
+			<td></td><td>
+				<table><tr>
+					<td><%= f.label "Points earned" %></td><td class="field_values gray text edittable">	<%= f.text_field :points, :class => "contents numeric", :value => "" %></td>
+				</tr></table>
+			</td>			
+		</tr>
+		<tr>
+			<td></td><td>
+				Your <%= f.label :feedback %>
+			</td>			
+		</tr>
+		<tr>
+			<td></td><td class="field_values gray text edittable">
+				<%= f.text_area :feedback, :rows => 3, :class => "contents fill" %>
+			</td>			
+		</tr>
+		<%= f.hidden_field :graded, :value => true %>
+	</table>	
+<% end %>

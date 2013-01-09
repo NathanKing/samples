@@ -1,0 +1,41 @@
+<% @assignments = @course.assignments%>	
+<% @announcements = @course.announcements%>
+
+
+<h2>Information:</h2>
+<div class="announcement"><b>Course name: </b><%= @course.course_name %></div>
+<div class="announcement"><b>Professor: </b><%= @course.professor.username %></div>
+<div class="announcement"><b>Course description: </b><%= @course.course_description %></div>
+<% if not current_user.role?("teacher") %>
+	<div class="announcement"><b>Overall grade: </b><%= @course.grade(current_user) %>% / <%= @course.max_grade(current_user) %>%</div>
+<% end %>
+<br/>
+
+
+<% if user_signed_in? %>
+
+	<h1>Assignments</h1>
+
+	<% for assignment in @assignments %>
+		<ul>
+			<li class="arrow">
+				<%=link_to h(assignment.title), course_assignment_path(@course, assignment)%>
+				<small class="counter">></small>
+			</li>
+			
+		</ul>
+	<% end %>
+	
+	<h1>Announcements</h1>
+	
+		<% for announcement in @announcements %>
+		<ul>
+			<li class="arrow">
+				<%= announcement.updated_at.strftime("%A, %b %d - %I:%M %p") %>
+				 - 
+				<%= link_to announcement.title, course_announcement_path(@course, announcement)%>				<small class="counter">></small>
+			</li>
+			
+		</ul>
+	<% end %>
+<% end %>

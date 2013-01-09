@@ -1,0 +1,79 @@
+<!-- yes/no dialog -->
+<% if current_user == nil && @show_dialog %>
+	<script>
+		$(document).ready(function(){
+			setTimeout(function(){
+				$("div.help a.modalInput").trigger('click');
+			}, 100);
+		});
+	</script>
+<% end %>
+<% if current_user != nil && !current_user.has_seen_home %>
+	<script>
+	$(document).ready(function(){
+		setTimeout(function(){
+			$("div.help a.modalInput").trigger('click');
+		}, 100);
+	});
+	</script>
+	<% current_user.has_seen_home = true %>
+	<% current_user.save %>
+<% end %>
+
+<div class="modal" id="yesno">
+  <img style="margin-top: 10px; z-index: 10000;" src="/migrade_logo2.png" height="50px">
+  <h2><br/>a better way of doing work.</h2>
+
+  <p>
+  	<b>Help</b> is just a stone's throw away with <i>Page Help</i> at the top right.
+  	<br/>
+  	<br/>
+    Course announcements will be here.
+    <br/>
+    <br/>
+    Always watch the links at the top of the page, they can help you navigrate migrade.
+    <ul>
+	    <% if current_user == nil %>
+	    	<li><b>Login</b></li>
+	    	<li><b>Register</b></li>
+	    <% elsif current_user.role == "teacher" %>
+	    	<li><b>Home</b> - Your news feed.</li>
+	    	<li><b>Courses</b> - Your classes.</li>
+	    	<li><b>Grades</b> - How you're students are doing.</li>
+	    <% else %>
+	    	<li><b>Home</b> - Your news feed.</li>
+	    	<li><b>My Courses</b> - Your courses.</li>
+	    	<li><b>My Grades</b> - How you're doing... good luck!</li>
+	    <% end %>
+    </ul>
+  </p>
+
+  <p>
+    <button class="close"> Ok </button><span class="note"> You can also hit escape to close this dialog. </span>
+  </p>
+</div>
+
+<h1>News</h1>
+
+<% @mycourses.each do |course| %>
+	<% if course.announcements.length > 0 %>
+		<p>
+			<h3><%=course.course_name%> - <%= course.course_description %></h3>
+			
+			<% course.announcements.each do |announcement| %>
+				
+				<div class = "announcement">
+					<span class="date"><%= announcement.updated_at.strftime("%A, %b %d - %I:%M %p") %></span> - <%= course.professor.username %>
+
+					<div>
+						<b><%=announcement.title%></b>
+						<br/>
+						<%=announcement.text%>
+					</div>
+				</div>
+				
+			<%end%>
+			
+		</p>
+	<% end %>
+<%end%>

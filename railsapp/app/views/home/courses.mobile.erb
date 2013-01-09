@@ -1,0 +1,11 @@
+<% if user_signed_in? %>
+
+	<ul>
+		<li class="arrow">
+			<%=link_to "My Assignments", course_assignment_path(course)%>
+			<small class="counter">></small>
+		</li>
+		
+	</ul>
+	
+<% end %>

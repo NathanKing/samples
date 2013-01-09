@@ -1,0 +1,33 @@
+<%= form_for [@course, @assignment] do |f|%>
+
+	<table>
+		<tr>
+			<td><b><%= f.label :title %></b></td>
+			<td><%= f.text_field :title %></td>
+		</tr>
+
+		<tr>
+			<td><%= f.label :value%></td>
+			<td><%= f.number_field :value%></td>
+		</tr>
+
+		<tr>
+			<td><%= f.label :description%></td>
+			<td><%= f.text_area :description, :rows => 3 %></td>
+		</tr>
+
+		<tr>
+			<td><%= f.label :due %></td>
+			<td><%= f.text_field :due%></td>
+		</tr>
+
+	</table>
+
+	<%= f.fields_for :questions do |builder| %>
+		<%= render 'question_fields', :f => builder %>
+	<% end %>
+	
+	<div class="questions"><%= link_to_add_fields "Add Question", f, :questions %></div>
+	
+	<%= f.submit %>
+<% end %>

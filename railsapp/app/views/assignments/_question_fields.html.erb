@@ -1,0 +1,54 @@
+<script>
+	$(document).ready(function(){
+	  $(".numeric").forceNumeric();
+	});
+</script>
+
+<table width="100%" class="question_details">
+	<% if params[:type] == 'edit' or params[:type] == 'new' %>
+		<tr>
+			<td class="field_values edittable medium light_gray"><%= f.text_field :points, :class => "short contents numeric" %> pts.</td>
+			<td><h3>Question <%= locals[:index] %>.</h3></td>
+		</tr>
+		<tr>
+			<td class="remove_button">
+				<% if params[:type] == 'edit' or params[:type] == 'new' %>
+					<%= f.hidden_field :_destroy %><%= link_to_function "remove", "remove_fields(this)", :class => "action_link" %>
+				<% end %>
+			</td>
+			<td class="field_values edittable fill"><%= f.text_area :question, :rows => 3, :class => "contents fill" %></td>
+		</tr>
+	<% elsif params[:type] == 'submit' or params[:type] == 'grade' %>
+	
+		<tr>
+			<td class="field_values readonly medium light_blue"><%= f.text_field :points, :class => "contents short light_blue points_text", :readOnly => true %> pts.</td>
+			<td><h3>Question <%= locals[:index] %>.</h3></td>
+		</tr>
+		<tr>
+			<td class="remove_button">
+				<% if params[:type] == 'edit' or params[:type] == 'new' %>
+					<%= f.hidden_field :_destroy %><%= link_to_function "remove", "remove_fields(this)" %>
+				<% end %>
+			</td>
+			<td class="field_values text readonly"><%= f.text_area :question, :rows => 3, :class => "fill contents dark_gray", :readOnly => true %></td>
+		</tr>
+		<tr>
+			<td></td>
+			<td>
+				<% if params[:type] == 'submit' %>
+					<%= f.fields_for :submissions do |builder| %>
+						<% if builder.object.new_record? %>
+							<%= render 'submission_fields', :f => builder, :type => params[:type] %>
+						<% end %>
+					<% end %>
+				<% elsif params[:type] == 'grade' %>
+					<%= f.fields_for :submissions do |builder| %>
+						<% if builder.object.user.id == params[:user_id].to_f %>
+							<%= render 'submission_fields', :f => builder, :type => params[:type] %>
+						<% end %>
+					<% end %>
+				<% end %>
+			</td>
+		</tr>
+	<% end %>
+</table>

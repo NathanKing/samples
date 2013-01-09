@@ -1,0 +1,73 @@
+<p>
+	<span class="title">Assignment: <%= @assignment.title%></span><br/>
+	<b>Due: </b><%= @assignment.due.strftime("%b %d") %><br/>
+	<b>Value: </b><%= @assignment.value %>%
+</p>
+
+<div class="announcement">
+  	<b>Description: </b><%= @assignment.description%>
+</div>
+
+<% i=1 %>
+<% @assignment.questions.each do |question|%>
+	<table width="100%" class="question_details">
+		<tr>
+			<td class="field_values edittable medium light_blue">
+				<% if question.submissions.find_all { |s| s.user == current_user and s.graded }.length > 0 %>
+					 <%= question.submissions.find_all { |s| s.user == current_user }.max { |s| s.updated_at }.points %> / 
+				<% end %>
+				<%= question.points %> pts.
+			</td>
+			<td><h3>Question <%= i %>.</h3></td>
+		</tr><tr>
+			<td></td><td><%= question.question.html_safe %></td>
+		</tr>
+		
+		<% submission = question.submissions.find_all { |s| s.user == current_user }.max { |s| s.created_at.to_f } %>
+		<% if not submission.nil? %>
+			<tr>
+				<td></td><td class="field_values dark_gray text">
+					<b>Your answer:</b><br/><br/>
+					&nbsp;&nbsp;&nbsp;&nbsp;<%= submission.response %>
+					<br/>
+				</td>
+			</tr>
+		<% end %>
+		
+		<% if question.submissions.find_all { |s| s.user == current_user and s.graded }.length > 0 %>
+			<tr>
+				<td></td><td class="field_values dark_gray text">
+					 <b><%= @course.professor.username %>'s feedback </b><br/><br/>
+					 &nbsp;&nbsp;&nbsp;&nbsp;<%= question.submissions.find_all { |s| s.user == current_user }.max { |s| s.updated_at }.feedback %> 
+				</td>
+			</tr>
+		<% end %>
+		<% i += 1 %>
+	</table>
+<%end%>
+
+<% if current_user.role?("student") %>
+	<% if @assignment.submitted?(current_user) %>
+	<% else %>
+		<%= link_to "Complete Assignment", edit_course_assignment_path(@assignment.course, @assignment, :type => 'submit', :header => 'Submit Assignment') %>
+	<% end %>
+<% end %>
+<% if @assignment.course.professor == current_user %>
+	<% if @course.users.all? { |u| not @assignment.submitted?(u) } %>
+		<%= link_to "Edit Assignment", edit_course_assignment_path(@assignment.course, @assignment, :type => 'edit', :header => 'Edit Assignment') %><br/><br/>
+	<% end %>
+
+	<% if @course.users.find_all { |u| @assignment.submitted?(u) and not @assignment.graded?(u) }.length > 0 %>
+		<b>Grade Submissions</b><ul>
+		<% @course.users.find_all { |u| @assignment.submitted?(u) and not @assignment.graded?(u) }.each do |user| %>
+			<li><%= link_to user.username + "'s Assignment", edit_course_assignment_path(@assignment.course, @assignment, :user_id => user, :type => 'grade', :header => 'Grade Assignment') %></li>
+		<% end %>
+		</ul>
+	<% else %>
+		<b>All submissions have been graded.</b>
+	<% end %>
+<% end %>
+			
+
+<br/><br/>
+<%= link_to 'Back', course_path(@course) %>

@@ -1,0 +1,22 @@
+<%= form_tag() do |f|%>
+	
+	<table>
+		
+		<tr>
+			<th>Course</th>
+			<th>Remove?</th>
+		</tr>
+		
+		<% for course in current_user.courses do %>
+			<tr>
+				<td><%= course.course_name %></td>
+				<td><%= check_box_tag "courses[]", course.id %></td>
+			</tr>
+		<% end %>
+	</table>
+	<br />
+	
+	<%= submit_tag "Remove checked courses"%>
+<%end%>
+
+

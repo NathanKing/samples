@@ -1,0 +1,17 @@
+<% @mycourses = current_user.courses %>
+<% if user_signed_in? %>
+
+	<ul>
+		<% for course in @mycourses %>
+		
+			<li class="arrow">
+				<%=link_to h(course.course_name), course %>
+				<small class="counter">></small>
+			</li>
+		<% end %>
+		
+	</ul>
+	
+	<br />
+
+<% end %>

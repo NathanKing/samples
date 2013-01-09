@@ -1,0 +1,27 @@
+<p>
+	<h1><%= @assignment.title%></h1>
+	<b>Value: <%= @assignment.value %>%</b>
+</p>
+
+<div class="announcement">
+  	<%= @assignment.description%>
+</div>
+
+<div class="announcement">
+	<% i=1 %>
+	<% @assignment.questions.each do |question|%>
+		<div class="question">
+			<table width="100%"><tr><td class="value"><%= question.points %> pts.</td><td><h3>Question <%= i %>.</h3></td></tr></table>
+			<div class="questionText">
+				<%= question.question %>
+			</div>
+		</div>
+		<% i += 1 %>
+	<%end%>
+</div>
+
+<% if can? :update, Assignment %>
+	<% if @assignment.course.professor == current_user %>
+		<%= link_to "Edit Assignment", edit_course_assignment_path(@assignment.course, @assignment)%> |
+	<% end %>
+<%end%>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<% app_name = "migrade" %>
+	<head>
+	  <title><%= app_name %></title>
+	  <%= stylesheet_link_tag "mobile" %>
+	  <%= javascript_include_tag "/jqtouch/jquery-1.7.min.js", "/jqtouch/jqtouch.min.js", "mobile" %>
+	  <%= csrf_meta_tag %>
+	  <%= javascript_include_tag "jquery.min", "jquery_ujs" %>
+	  <meta name="viewport" content="width=device-width">
+	  
+	</head>
+	
+	<div id=top-menu>
+		
+		<div id=top-menu-left>
+			<% if user_signed_in? %>			
+		  		<%= link_to "Sign out", destroy_user_session_path, :method => :delete%>
+			<% else %>
+				<%= link_to "Login", new_user_session_path %>
+			<% end %>
+		</div>
+		
+		<div id=top-menu-right>
+			<% if user_signed_in? %>			
+				<%= link_to "Home", home_index_path%>
+			<% else %>
+		  		<%= link_to "Register", new_user_registration_path %>
+			<% end %>
+		</div>
+	</div>
+	
+	<body>
+	
+	<div class="nosidebar" id="main">
+		
+		<div id="sidebar">
+			
+		</div>
+		
+		<div id="content">
+			
+			<%= yield %>
+		</div>
+		
+	</div>
+	
+	</body>
+	<div id=footer>
+		
+		<% if mobile_device? %>
+				
+			<%= link_to "Full Site", :mobile => 0 %>
+			
+		<% else %>
+		
+			<%= link_to "Mobile Site", :mobile => 1 %>
+			
+		<% end %>
+		
+	</div>
+	
+</html>

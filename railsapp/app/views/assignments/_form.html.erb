@@ -1,0 +1,79 @@
+<script>
+	// forceNumeric() plug-in implementation
+	jQuery.fn.forceNumeric = function () {
+		return this.each(function () {
+			$(this).keydown(function (e) {
+				var key = e.which || e.keyCode;
+				
+				if (!e.shiftKey && !e.altKey && !e.ctrlKey &&
+				// numbers   
+					key >= 48 && key <= 57 ||
+				// Numeric keypad
+					key >= 96 && key <= 105 ||
+				// Backspace and Tab and Enter
+					key == 8 || key == 9 || key == 13 ||
+				// Home and End
+					key == 35 || key == 36 ||
+				// left and right arrows
+					key == 37 || key == 39 ||
+				// Del and Ins
+					key == 46 || key == 45){
+					return true;
+				}
+			
+				return false;
+			});
+		});
+	}
+	$(document).ready(function(){
+		$(".numeric").forceNumeric();
+	});           
+
+</script>
+
+<%= form_for [@course, @assignment] do |f|%>
+	<% if params[:type] == 'edit' or params[:type] == 'new' %>
+		<table class = "assignment_details">
+			<tr><td class="field_titles readonly"><%= f.label :title %></td>		<td class="field_values edittable"><%= f.text_field :title, :class => "fill contents title" %></td></tr>
+	
+			<tr><td class="field_titles readonly"><%= f.label :due %></td>			<td class="field_values edittable"><%= f.date_select :due, :class => "fill contents", :id => "datepicker" %></td></tr>
+	
+			<tr><td class="field_titles readonly"><%= f.label :value%></td>			<td class="field_values edittable"><%= f.text_field :value, :class => "fill contents numeric" %></td></tr>
+	
+			<tr><td class="field_titles readonly"><%= f.label :description%></td>	<td class="field_values edittable"><%= f.text_area :description, :rows => 3, :class => "fill border contents" %></td></tr>
+		</table>
+	<% elsif params[:type] == 'submit' or params[:type] == 'grade' %>
+			<span class="title">
+				<%= params[:type].capitalize %> Assignment: <%= @assignment.title %><br/>
+			</span>
+			<span class="text">
+				<b>Due: </b><%= @assignment.due.strftime("%b %d") %><br/>
+				<b>Value: </b><%= @assignment.value %>%<br/>
+				<div class="announcement">
+				  	<b>Description: </b><%= @assignment.description%>
+				</div>
+			</span>
+	<% end %>
+
+
+	<% @assignment.questions.each.with_index do |question, index| %>
+		<%= f.fields_for :questions, question do |builder| %>
+			<%= render 'question_fields', :f => builder, :locals => { :index => index+1 }, :type => params[:type] %>
+		<% end %>
+	<% end %>
+	
+	<% if params[:type] == 'edit' or params[:type] == 'new' %>
+		<div class="questions"><%= link_to_add_fields "Add Question", f, :questions %></div>
+	<% end %>
+	
+
+	<% if params[:type] == 'edit' %>
+		<%= f.submit 'Update Assignment' %>
+	<% elsif params[:type] == 'new' %>
+		<%= f.submit 'Create Assignment' %>
+	<% elsif params[:type] == 'submit' %>
+		<%= f.submit 'Submit Assignment' %>
+	<% elsif params[:type] == 'grade' %>
+		<%= f.submit 'Grade Assignment' %>
+	<% end %>
+<% end %>
